@@ -6,7 +6,8 @@ pub fn tokenize(input: &str) -> Vec<String> {
         .to_lowercase()
         .replace(", ", ",")
         .replace("\r", "")
-        .split('\n')
+        .lines()
+        .map(|line| line.split(';').next().unwrap_or(""))
         .flat_map(|line| {
             line.split(|c| c == ' ' || c == ',')
                 .filter(|s| !s.is_empty())
@@ -15,7 +16,15 @@ pub fn tokenize(input: &str) -> Vec<String> {
         .collect()
 }
 
-pub fn parse_tokens(tokens: Vec<String>) -> Vec<u16> {
+pub fn parse_tokens(mut tokens: Vec<String>) -> Vec<u16> {
+    if let Some(last) = tokens.last() {
+        if last.to_lowercase() != "hlt" {
+            tokens.push("hlt".to_string());
+        }
+    } else {
+        tokens.push("hlt".to_string());
+    }
+
     let mut opcodes: Vec<u16> = Vec::new();
 
     for token in tokens.iter() {
