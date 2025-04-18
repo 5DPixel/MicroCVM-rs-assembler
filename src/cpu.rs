@@ -17,26 +17,29 @@ pub enum OpcodeType {
     Call = 0x0A,
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[repr(u16)]
 pub enum Register {
-    R0 = 0x01,
-    R1 = 0x02,
-    R2 = 0x03,
-    R3 = 0x04,
-    R4 = 0x05,
-    R5 = 0x06,
-    R6 = 0x07,
-    R7 = 0x08,
+    R0 = 0x1001,
+    R1 = 0x1002,
+    R2 = 0x1003,
+    R3 = 0x1004,
+    R4 = 0x1005,
+    R5 = 0x1006,
+    R6 = 0x1007,
+    R7 = 0x1008,
+
     // Video argument registers
-    V0 = 0x09, // Red
-    V1 = 0x0A, // Green
-    V2 = 0x0B, // Blue
-    V3 = 0x0C, // Line thickness
-    V4 = 0x0D, // Starting x coordinate
-    V5 = 0x0E, // Starting y coordinate
-    V6 = 0x0F, // Ending x coordinate
-    V7 = 0x10, // Ending y coordinate
-    Invalid = 0xFF,
+    V0 = 0x2001, // Red
+    V1 = 0x2002, // Green
+    V2 = 0x2003, // Blue
+    V3 = 0x2004, // Line thickness
+    V4 = 0x2005, // Starting x coordinate
+    V5 = 0x2006, // Starting y coordinate
+    V6 = 0x2007, // Ending x coordinate
+    V7 = 0x2008, // Ending y coordinate
+
+    Invalid = 0xFFFF,
 }
 
 #[repr(u8)]

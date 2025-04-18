@@ -1,6 +1,6 @@
 use std::env;
-use std::fs::read_to_string;
-use std::io::{self};
+use std::fs::{metadata, read_to_string};
+use std::io::{self, Write};
 
 mod assemble;
 mod cpu;
@@ -66,6 +66,28 @@ fn main() -> io::Result<()> {
     let input_file = &args[1];
     let output_file = &args[3];
 
+    if let Err(e) = metadata(input_file) {
+        eprintln!(
+            "{}error:{} could not access input file '{}'. Error: {}",
+            RED, RESET, input_file, e
+        );
+        std::process::exit(1);
+    }
+
+    if let Ok(_) = metadata(output_file) {
+        print!(
+            "{}warning:{} output file '{}' already exists. overwrite? (y/n): ",
+            YELLOW, RESET, output_file
+        );
+        io::stdout().flush()?;
+        let mut response = String::new();
+        io::stdin().read_line(&mut response)?;
+        if !response.trim().eq_ignore_ascii_case("y") {
+            println!("{}operation aborted. Exiting...{}", RED, RESET);
+            std::process::exit(0);
+        }
+    }
+
     let input = read_to_string(input_file)?;
 
     let tokens = assemble::tokenize(&input);
@@ -73,7 +95,7 @@ fn main() -> io::Result<()> {
     assemble::create_binary(opcodes, output_file)?;
 
     println!(
-        "{}success:{} Assembly compiled to {}{}{}",
+        "{}success:{} assembly compiled to {}{}{}",
         GREEN, RESET, CYAN, output_file, RESET
     );
     Ok(())
