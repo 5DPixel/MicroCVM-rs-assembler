@@ -21,8 +21,6 @@ pub fn parse_tokens(mut tokens: Vec<String>) -> Vec<u16> {
         if last.to_lowercase() != "hlt" {
             tokens.push("hlt".to_string());
         }
-    } else {
-        tokens.push("hlt".to_string());
     }
 
     let mut opcodes: Vec<u16> = Vec::new();
