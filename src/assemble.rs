@@ -24,11 +24,30 @@ pub fn parse_tokens(mut tokens: Vec<String>) -> Vec<u16> {
     }
 
     let mut opcodes: Vec<u16> = Vec::new();
+    let mut i = 0;
 
-    for token in tokens.iter() {
-        let token_str = token.as_str();
+    while i < tokens.len() {
+        let token_str = tokens[i].as_str();
 
-        if let Ok(op) = super::cpu::OpcodeType::try_from(token_str) {
+        if token_str == "ds" {
+            i += 1;
+            if i >= tokens.len() {
+                break;
+            }
+
+            let string = tokens[i].trim_matches('"');
+            let mut bytes = string.bytes().collect::<Vec<_>>();
+            if bytes.len() % 2 != 0 {
+                bytes.push(0);
+            }
+
+            for chunk in bytes.chunks(2) {
+                let lo = chunk[0];
+                let hi = chunk[1];
+                let value = (hi as u16) << 8 | (lo as u16);
+                opcodes.push(value);
+            }
+        } else if let Ok(op) = super::cpu::OpcodeType::try_from(token_str) {
             opcodes.push(op as u16);
         } else if let Ok(reg) = super::cpu::Register::try_from(token_str) {
             opcodes.push(reg as u16);
@@ -37,6 +56,8 @@ pub fn parse_tokens(mut tokens: Vec<String>) -> Vec<u16> {
         } else if let Ok(fun) = super::cpu::FunctionCall::try_from(token_str) {
             opcodes.push(fun as u16);
         }
+
+        i += 1;
     }
 
     opcodes

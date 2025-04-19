@@ -11,19 +11,28 @@ const GREEN: &str = "\x1b[32m";
 const YELLOW: &str = "\x1b[33m";
 const CYAN: &str = "\x1b[36m";
 const RESET: &str = "\x1b[0m";
+const BOLD: &str = "\x1b[1m";
+const RESET_BOLD: &str = "\x1b[22m";
 
 fn print_help() {
     println!(
-        "{}MicroCVM Assembler (mca){}\n\n\
-         {}Usage:{}\n\
-         \tmca <{}input.asm{}> {}-o{} <{}output.bin{}>\n\n\
+        "{}{}MicroCVM Assembler (mca){}{}\n\n\
+         {}{}Usage:{}{}\n\
+         \t{}mca{} <{}input.asm{}> {}-o{} <{}output.bin{}>\n\n\
          {}Flags:{}\n\
          \t{}-o{}       Specify output binary file name\n\
-         \t{}-h{}       Show this help message\n",
+         \t{}-h{}       Show this help message\n\
+         \t{}--version{} Show current version\n",
         CYAN,
+        BOLD,
+        RESET_BOLD,
         RESET,
         YELLOW,
+        BOLD,
         RESET,
+        RESET_BOLD,
+        BOLD,
+        RESET_BOLD,
         GREEN,
         RESET,
         CYAN,
@@ -31,6 +40,8 @@ fn print_help() {
         GREEN,
         RESET,
         YELLOW,
+        RESET,
+        CYAN,
         RESET,
         CYAN,
         RESET,
@@ -47,18 +58,39 @@ fn main() -> io::Result<()> {
         return Ok(());
     }
 
+    if args.contains(&"--version".to_string()) {
+        println!(
+            "{}{}MicroCVM assembler (mca){}{}\n\n
+            Created by {}{}Jude Routledge{}{}\n
+            Version {}{}{}{}{}",
+            BOLD,
+            CYAN,
+            RESET_BOLD,
+            RESET,
+            BOLD,
+            GREEN,
+            RESET_BOLD,
+            RESET,
+            BOLD,
+            CYAN,
+            env!("CARGO_PKG_VERSION"),
+            RESET,
+            RESET_BOLD
+        );
+    }
+
     if args.len() != 4 {
         eprintln!(
-            "{}fatal error:{} mca (no input files detected, use {}-h{} for help)",
-            RED, RESET, CYAN, RESET
+            "{}{}fatal error:{}{} mca (no input files detected, use {}{}-h{}{} for help)",
+            BOLD, RED, RESET, RESET_BOLD, BOLD, CYAN, RESET, RESET_BOLD
         );
         std::process::exit(1);
     }
 
     if args[2] != "-o" {
         eprintln!(
-            "{}error:{} expected {}-o{} flag before output file.",
-            RED, RESET, CYAN, RESET
+            "{}{}fatal error:{}{} mca (no input files detected, use {}{}-h{}{} for help)",
+            BOLD, RED, RESET, RESET_BOLD, BOLD, CYAN, RESET, RESET_BOLD
         );
         std::process::exit(1);
     }
@@ -68,22 +100,22 @@ fn main() -> io::Result<()> {
 
     if let Err(e) = metadata(input_file) {
         eprintln!(
-            "{}error:{} could not access input file '{}'. Error: {}",
-            RED, RESET, input_file, e
+            "{}{}error:{}{} could not access input file '{}'. Error: {}",
+            BOLD, RED, RESET, RESET_BOLD, input_file, e
         );
         std::process::exit(1);
     }
 
     if let Ok(_) = metadata(output_file) {
         print!(
-            "{}warning:{} output file '{}' already exists. overwrite? (y/n): ",
-            YELLOW, RESET, output_file
+            "{}{}warning:{}{} output file '{}' already exists. overwrite? (y/n): ",
+            BOLD, YELLOW, RESET, RESET_BOLD, output_file
         );
         io::stdout().flush()?;
         let mut response = String::new();
         io::stdin().read_line(&mut response)?;
         if !response.trim().eq_ignore_ascii_case("y") {
-            println!("{}operation aborted. Exiting...{}", RED, RESET);
+            println!("{}operation aborted. exiting...{}", RED, RESET);
             std::process::exit(0);
         }
     }
@@ -95,8 +127,8 @@ fn main() -> io::Result<()> {
     assemble::create_binary(opcodes, output_file)?;
 
     println!(
-        "{}success:{} assembly compiled to {}{}{}",
-        GREEN, RESET, CYAN, output_file, RESET
+        "{}{}success:{}{} assembly compiled to {}{}{}{}{}",
+        BOLD, GREEN, RESET, RESET_BOLD, CYAN, BOLD, output_file, RESET, RESET_BOLD
     );
     Ok(())
 }

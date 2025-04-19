@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-#[repr(u8)]
+#[repr(u16)]
 #[derive(Debug, Clone, Copy)]
 pub enum OpcodeType {
     Load = 0x01,
@@ -15,6 +15,9 @@ pub enum OpcodeType {
     Mul = 0x09,
     Nop = 0x90,
     Call = 0x0A,
+    Je = 0x0B,
+    Jne = 0x0C,
+    Cmp = 0x0D,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -49,6 +52,7 @@ pub enum FunctionCall {
     DrawLine = 0x14,
     FillRect = 0x15,
     ClearScreen = 0x16,
+    LoadBMP = 0x17,
 }
 
 #[repr(transparent)]
@@ -120,6 +124,9 @@ impl TryFrom<&str> for OpcodeType {
             "mul" => Ok(OpcodeType::Mul),
             "nop" => Ok(OpcodeType::Nop),
             "call" => Ok(OpcodeType::Call),
+            "je" => Ok(OpcodeType::Je),
+            "jne" => Ok(OpcodeType::Jne),
+            "cmp" => Ok(OpcodeType::Cmp),
             invalid => return Err(InvalidOpcodeString(invalid.to_string())),
         }
     }
@@ -159,8 +166,9 @@ impl TryFrom<&str> for FunctionCall {
         match value {
             "set_pixel" => Ok(FunctionCall::SetPixel),
             "draw_line" => Ok(FunctionCall::DrawLine),
-            "fill_rect" => Ok(FunctionCall::FillRect),
+            "fill_screen" => Ok(FunctionCall::FillRect),
             "clear_screen" => Ok(FunctionCall::ClearScreen),
+            "load_bmp" => Ok(FunctionCall::LoadBMP),
             invalid => Err(InvalidFunctionCallString(invalid.to_string())),
         }
     }
