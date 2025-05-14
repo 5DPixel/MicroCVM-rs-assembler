@@ -18,6 +18,18 @@ pub enum OpcodeType {
     Je = 0x0B,
     Jne = 0x0C,
     Cmp = 0x0D,
+    And = 0x0E,
+    Or = 0x0F,
+    Xor = 0x10,
+    Not = 0x11,
+    Shl = 0x12,
+    Shr = 0x13,
+    //Stack opcodes
+    Push = 0x14,
+    Pop = 0x15,
+    Ret = 0x16,
+
+    Load8 = 0x17,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -51,8 +63,6 @@ pub enum Register {
     V15 = 0x2010, //Quadrilateral point 4 y
     //Keycode
     K0 = 0x3001,
-
-    Invalid = 0xFFFF,
 }
 
 #[repr(u8)]
@@ -140,6 +150,16 @@ impl TryFrom<&str> for OpcodeType {
             "je" => Ok(OpcodeType::Je),
             "jne" => Ok(OpcodeType::Jne),
             "cmp" => Ok(OpcodeType::Cmp),
+            "and" => Ok(OpcodeType::And),
+            "or" => Ok(OpcodeType::Or),
+            "xor" => Ok(OpcodeType::Xor),
+            "not" => Ok(OpcodeType::Not),
+            "shl" => Ok(OpcodeType::Shl),
+            "shr" => Ok(OpcodeType::Shr),
+            "push" => Ok(OpcodeType::Push),
+            "pop" => Ok(OpcodeType::Pop),
+            "ret" => Ok(OpcodeType::Ret),
+            "load8" => Ok(OpcodeType::Load8),
             invalid => return Err(InvalidOpcodeString(invalid.to_string())),
         }
     }

@@ -122,8 +122,8 @@ fn main() -> io::Result<()> {
 
     let input = read_to_string(input_file)?;
 
-    let tokens = assemble::tokenize(&input);
-    let opcodes = assemble::parse_tokens(tokens);
+    let (tokens, labels) = assemble::tokenize(&input);
+    let opcodes = assemble::parse_tokens(tokens, &labels);
     assemble::create_binary(opcodes, output_file)?;
 
     println!(
